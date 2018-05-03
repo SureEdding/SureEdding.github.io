@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>iOS画板 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="实践做一个小画板">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS画板">
+<meta property="og:url" content="http://yoursite.com/2015/06/28/DrawPad/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="实践做一个小画板">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2015-08-04T09:52:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS画板">
+<meta name="twitter:description" content="实践做一个小画板">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-DrawPad" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/28/DrawPad/" class="article-date">
+  <time datetime="2015-06-28T10:04:56.000Z" itemprop="datePublished">2015-06-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS画板
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>实践做一个小画板<br><br><a id="more"></a></p>
+<p>#####鸣谢<br><a href="http://blog.csdn.net/yiyaaixuexi/article/details/7407851" target="_blank" rel="noopener">从这里作为参考</a></p>
+<p>#####地址</p>
+<p><a href="https://github.com/SureEdding/DrawPad" target="_blank" rel="noopener">Github地址</a><br><br></p>
+<p>#####主要思想<br>通过<br></p>
+<pre><code>- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event；
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event；
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event；
+</code></pre><p>三个<code>UIResponder</code>的底层函数来检测手势触点，然后在本地存储下所有触点，然后实时重绘</p>
+<p>#####实现<br><br><br><code>DrawPadView.h</code></p>
+<pre><code>@interface DrawPadView : UIView{
+    NSMutableArray *points;
+    NSArray *point_all;
+    CGContextRef context;
+    UIColor *paint_color;
+    CGFloat paint_width;
+}
+@property (strong ,nonatomic) NSMutableArray *points;
+@property (strong ,nonatomic) NSArray *points_all;
+@property (strong, nonatomic) UIColor *paint_color;
+@property (assign, nonatomic) CGFloat paint_width;
+
+@end
+</code></pre><p><code>DrawPadView.m</code><br><br>其中points_all是用来存储所有触碰过的触点，包括多条路径的不同点<br><br>points_all是一个<code>NSArray</code>，数组中存储的对象是多个points对象<br>每个points对象对应一条完整的路径，是一个<code>NSMutableArray</code>，会在手指触碰屏幕的时候实时添加触点进points</p>
+<pre><code>- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    _points = [[NSMutableArray alloc] init];
+    CGPoint touchPoint = [[touches anyObject] locationInView:self];
+    [_points addObject:[NSValue valueWithCGPoint:touchPoint]];
+}
+</code></pre><p>路径开始点，初始化points数组，并且讲触点添加进数组当中</p>
+<pre><code>- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSValue *point = [NSValue valueWithCGPoint:[[touches anyObject] locationInView:self]];
+   [_points addObject:point];
+   [self setNeedsDisplay];
+}
+</code></pre><p>然后手指移动的过程中，讲当前时刻的触点存储在points当中<br><br>并且实时调用绘制函数 <code>[self setNeedsDisplay]</code></p>
+<pre><code>- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSValue *point = [NSValue valueWithCGPoint:[[touches anyObject] locationInView:self]];
+   [_points addObject:point];
+    NSMutableArray *tempArray = [_points_all mutableCopy];
+    [tempArray addObject:_points];
+    _points_all = tempArray;
+}
+</code></pre><p>然后路径结束的时候，会进入此函数，然后路径结束，讲<code>points</code>添加进<code>points_all</code><br></p>
+<p>最后是比较重要的重绘函数</p>
+<pre><code>- (void)drawRect:(CGRect)rect
+{
+    if (!_points_all || !_points || [_points count] &lt; 2) 
+    {
+        _points_all = [[NSArray alloc] init];
+        _points = [[NSMutableArray alloc] init];
+        return;
+    }
+    context = UIGraphicsGetCurrentContext();
+
+    CGContextSetLineWidth(context, _paint_width);
+
+    CGContextSetStrokeColorWithColor(context, [_paint_color CGColor]);
+
+    //画之前的线
+    for (NSArray *array in _points_all){
+        [self drawLineWithArray:array];
+    }
+    //画现在的线
+    [self drawLineWithArray:_points];
+}
+
+- (void)drawLineWithArray:(NSArray *)array
+{
+    CGPoint beforePoint = [[array objectAtIndex:0] CGPointValue];
+    CGContextMoveToPoint(context, beforePoint.x, beforePoint.y);
+    for (UInt64 i = 1; i &lt; [array count]; i++) 
+    {
+        CGPoint nowPoint = [[array objectAtIndex:i] CGPointValue];
+        CGContextAddLineToPoint(context, nowPoint.x, nowPoint.y);
+    }
+    CGContextStrokePath(context);
+}
+//根据数组绘制路径
+</code></pre><p>后续会继续做关于颜色改变，粗细设定等方面的开发</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/28/DrawPad/" data-id="cjgq3yzhr00031fzpgrssmbdu" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/08/04/AsyncImageLoader/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          异步加载图片
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/06/28/PNChart/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">PNChart解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自述/">自述</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/自述/" style="font-size: 10px;">自述</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/13/linearRegression/">机器学习（一）Linear Regression</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/06/Method-Swizzling/">聊聊Method Swizzling</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/29/DatabaseThink/">Core Data, FMDB, Realm 性能测试</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/01/Dynamic-Synthesize/">@dynamic 与 @synthesize 关键词详解</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/04/AsyncImageLoader/">异步加载图片</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

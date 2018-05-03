@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>机器学习（一）Linear Regression | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="###概括作为一个机器学习的新手，最近在上Coursera上Ng老师的机器学习课程，这个课作为入门还是挺不错的，讲得浅显易懂，对学生的数学知识也有一定的补习。相对的，这门课相当于是斯坦福CS229这门课的简单版，如果有想要更深入的了解，可以直接看CS229,网易公开课上有视频。">
+<meta name="keywords" content="Machine Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习（一）Linear Regression">
+<meta property="og:url" content="http://yoursite.com/2015/12/13/linearRegression/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="###概括作为一个机器学习的新手，最近在上Coursera上Ng老师的机器学习课程，这个课作为入门还是挺不错的，讲得浅显易懂，对学生的数学知识也有一定的补习。相对的，这门课相当于是斯坦福CS229这门课的简单版，如果有想要更深入的了解，可以直接看CS229,网易公开课上有视频。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/test_database_Screen%20Shot%202015-12-13%20at%201.27.40%20PM.png">
+<meta property="og:updated_time" content="2016-10-27T09:43:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习（一）Linear Regression">
+<meta name="twitter:description" content="###概括作为一个机器学习的新手，最近在上Coursera上Ng老师的机器学习课程，这个课作为入门还是挺不错的，讲得浅显易懂，对学生的数学知识也有一定的补习。相对的，这门课相当于是斯坦福CS229这门课的简单版，如果有想要更深入的了解，可以直接看CS229,网易公开课上有视频。">
+<meta name="twitter:image" content="http://7xj983.com1.z0.glb.clouddn.com/test_database_Screen%20Shot%202015-12-13%20at%201.27.40%20PM.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-linearRegression" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/13/linearRegression/" class="article-date">
+  <time datetime="2015-12-13T02:21:19.000Z" itemprop="datePublished">2015-12-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      机器学习（一）Linear Regression
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###概括<br>作为一个机器学习的新手，最近在上<a href="https://www.coursera.org/learn/machine-learning/" target="_blank" rel="noopener">Coursera上Ng老师的机器学习课程</a>，这个课作为入门还是挺不错的，讲得浅显易懂，对学生的数学知识也有一定的补习。<br><br>相对的，这门课相当于是<a href="http://cs229.stanford.edu/" target="_blank" rel="noopener">斯坦福CS229</a>这门课的简单版，如果有想要更深入的了解，可以直接看CS229,<a href="http://open.163.com/special/opencourse/machinelearning.html" target="_blank" rel="noopener">网易公开课</a>上有视频。<br><a id="more"></a></p>
+<p>###前三周<br>看完前三周的课，对这门课的第一部门也算告一段落。<br><br>前三周的主要内容是</p>
+<p>#####模型：</p>
+<ul>
+<li>线性回归(Linear Regression)</li>
+<li>逻辑回归(Logistic Regression)</li>
+</ul>
+<p>#####解决（学习）方法</p>
+<ul>
+<li>梯度下降(Gradient Descent)</li>
+<li>一般方程(Normal Equation)</li>
+<li>高级优化(advanced optimization)</li>
+</ul>
+<p>####线性回归(Linear Regression)</p>
+<p>经典的例子，对房价的预估</p>
+<table>
+<thead>
+<tr>
+<th>Living area(feet^2)</th>
+<th>bedroom</th>
+<th>Price(1000$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2104</td>
+<td>3</td>
+<td>400</td>
+</tr>
+<tr>
+<td>1600</td>
+<td>3</td>
+<td>330</td>
+</tr>
+<tr>
+<td>2400</td>
+<td>3</td>
+<td>369</td>
+</tr>
+<tr>
+<td>1416</td>
+<td>2</td>
+<td>232</td>
+</tr>
+<tr>
+<td>3000</td>
+<td>4</td>
+<td>540</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>第一列是房屋面积(x1)，第二列是房间数(x2)，第三列是价格(y)</p>
+<p>则假定(hypotheses)房屋价格满足</p>
+<!-- $$
+\begin{eqnarray}
+\nabla\cdot\vec{E} &=& \frac{\rho}{\epsilon_0} \\
+\nabla\cdot\vec{B} &=& 0 \\
+\nabla\times\vec{E} &=& -\frac{\partial B}{\partial t} \\
+\nabla\times\vec{B} &=& \mu_0\left(\vec{J}+\epsilon_0\frac{\partial E}{\partial t} \right)
+\end{eqnarray}
+$$
+ -->
+<!-- <img src=http://www.forkosh.com/mathtex.cgi?h_{\theta}(x)=\theta_{0}+\theta_{1}x^{1}+\theta_{2}x^{2}> -->
+<p>$$<br>h_{\theta}(x)=\theta_{0}+\theta_{1}x^{1}+\theta_{2}x^{2}<br>$$</p>
+<p>一般为了简便运算，我们人为引入一个变量x0</p>
+<p>$$<br>h_{\theta}(x)=\theta_{0}x^{0}+\theta_{1}x^{1}+\theta_{2}x^{2}<br>$$</p>
+<p>这样的话，函数h(θ)就满足线性关系</p>
+<p>$$<br>h_{\theta}=\sum_{i}^{m}\theta_{i}x_{i}=\theta^{T}x<br>$$</p>
+<p>此时，如果我们给出一个含有m个数据的训练集D</p>
+<p>$$<br>D=(x^{1},y^{1}),(x^{2},y^{2})…({x^{m},y^{m}})<br>$$</p>
+<p>我们该如何来选择参数θ？<br>最能想到的就是让我们假设的函数h(θ)尽可能的接近训练集中的y<br>为了衡量这个相近的程度，我们引入一个代价函数</p>
+<p>$$<br>J(\theta)=\frac{1}{2m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})^{2}<br>$$</p>
+<p>用于衡量对于一组输入x来说参数θ的表现。<br>而我们学习的目的就是要让代价函数J(θ)最小，由此我们可以对θ求导，求得极小值,然后通过<strong>剃度下降</strong>的方式来叠加到θ上</p>
+<p>$$<br>\theta_{j}:=\theta_{j}-\alpha*\frac{1}{m}\sum_{m}^{i=1}(h_{\theta}(x^{(i)}-y^{(i)})x_{j}^{(i)}<br>$$</p>
+<p>其中α是作为学习因子，控制递增速度用。</p>
+<p>通过梯度下降的的方法来得到一组满足min(J(θ))的θ，则可以得到一组图像<br><img src="http://7xj983.com1.z0.glb.clouddn.com/test_database_Screen%20Shot%202015-12-13%20at%201.27.40%20PM.png" alt="img"></p>
+<p>最终，如果我们有一组新的未知的数据Xn，则我们可以通过我们的假设函数（hypotheses）</p>
+<p>$$<br>h_{\theta}=\sum_{i}^{m}\theta_{i}x_{i}=\theta^{T}x<br>$$</p>
+<p>可以得到一个假设值，这就是我们对y值的预测。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/12/13/linearRegression/" data-id="cjgq3yzip000g1fzpz0kve173" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/12/06/Method-Swizzling/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">聊聊Method Swizzling</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自述/">自述</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/自述/" style="font-size: 10px;">自述</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/13/linearRegression/">机器学习（一）Linear Regression</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/06/Method-Swizzling/">聊聊Method Swizzling</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/29/DatabaseThink/">Core Data, FMDB, Realm 性能测试</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/01/Dynamic-Synthesize/">@dynamic 与 @synthesize 关键词详解</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/04/AsyncImageLoader/">异步加载图片</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

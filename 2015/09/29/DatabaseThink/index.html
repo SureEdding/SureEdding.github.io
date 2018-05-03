@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Core Data, FMDB, Realm 性能测试 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="CoreData, FMDB, Realm是iOS开发中数据本地持久化存储的常用的方法。之后我准备深处探索一下这几个不同的解决方案的优劣与内部原理，于是我先就三个库的性能做了一次测试">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Core Data, FMDB, Realm 性能测试">
+<meta property="og:url" content="http://yoursite.com/2015/09/29/DatabaseThink/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="CoreData, FMDB, Realm是iOS开发中数据本地持久化存储的常用的方法。之后我准备深处探索一下这几个不同的解决方案的优劣与内部原理，于是我先就三个库的性能做了一次测试">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/test_database_first_Insert.png">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/test_database_insert.png">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/test_database_select.png">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/test_database_update.png">
+<meta property="og:updated_time" content="2015-09-29T06:22:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Core Data, FMDB, Realm 性能测试">
+<meta name="twitter:description" content="CoreData, FMDB, Realm是iOS开发中数据本地持久化存储的常用的方法。之后我准备深处探索一下这几个不同的解决方案的优劣与内部原理，于是我先就三个库的性能做了一次测试">
+<meta name="twitter:image" content="http://7xj983.com1.z0.glb.clouddn.com/test_database_first_Insert.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-DatabaseThink" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/29/DatabaseThink/" class="article-date">
+  <time datetime="2015-09-29T05:33:18.000Z" itemprop="datePublished">2015-09-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Core Data, FMDB, Realm 性能测试
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreData/index.html#//apple_ref/doc/uid/TP40001075" target="_blank" rel="noopener">CoreData</a>, <a href="https://github.com/ccgus/fmdb" target="_blank" rel="noopener">FMDB</a>, <a href="https://realm.io/" target="_blank" rel="noopener">Realm</a>是iOS开发中数据本地持久化存储的常用的方法。<br>之后我准备深处探索一下这几个不同的解决方案的优劣与内部原理，于是我先就三个库的性能做了一次测试<br></p>
+<a id="more"></a>
+<ol>
+<li>第一次创建库，插入1K条数据的性能</li>
+<li>已有库的情况下，插入1K条数据的性能</li>
+<li>从10K条数据中连续单次查询1K条数据的性能</li>
+<li>10K条数据总量，更新其中1K条数据的部分字段性能<br></li>
+</ol>
+<p>主要是以上四种操作的时间对比，为了使数据对比明显，以1K为最小单位进行测试。目前涉及到对应数据库操作中的<code>Create</code>, <code>SELECT</code>,<code>UPDATE</code>三种操作<br><br></p>
+<p><a href="https://github.com/SureEdding/iOS-different-Content-Persistent-method-test" target="_blank" rel="noopener">这是我的测试代码</a><br><br></p>
+<p>###第一组数据：<br><br><br>测试内容：第一次创建库，插入1K条数据的性能</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>平均时间(s)</th>
+<th>用例数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Realm</td>
+<td>13.76585432</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>FMDB</td>
+<td>13.41253833</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>CoreData</td>
+<td>2.558547</td>
+<td>1024</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xj983.com1.z0.glb.clouddn.com/test_database_first_Insert.png" alt="FirstInsert"></p>
+<p>###第二组数据：<br><br><br>测试内容：已有库的情况下，插入1K条数据的性能</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>平均时间(s)</th>
+<th>用例数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Realm</td>
+<td>13.61145302</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>FMDB</td>
+<td>8.21827366</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>CoreData</td>
+<td>2.050277988</td>
+<td>1024</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xj983.com1.z0.glb.clouddn.com/test_database_insert.png" alt="FirstInsert"></p>
+<p>###第三组数据：<br><br><br>测试内容：从10K条数据中连续单次查询1K条数据的性能</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>平均时间(s)</th>
+<th>用例数量/总量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Realm</td>
+<td>0.574331999</td>
+<td>1024/10240</td>
+</tr>
+<tr>
+<td>FMDB</td>
+<td>0.369130015</td>
+<td>1024/10240</td>
+</tr>
+<tr>
+<td>CoreData</td>
+<td>2.054877996</td>
+<td>1024/10240</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xj983.com1.z0.glb.clouddn.com/test_database_select.png" alt="FirstInsert"></p>
+<p>###第四组数据：<br><br><br>测试内容：10K条数据总量，更新其中1K条数据的部分字段性能<br></p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>平均时间(s)</th>
+<th>用例数量/总量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Realm</td>
+<td>0.256972333</td>
+<td>1024/10240</td>
+</tr>
+<tr>
+<td>FMDB</td>
+<td>0.014923016</td>
+<td>1024/10240</td>
+</tr>
+<tr>
+<td>CoreData</td>
+<td>0.303027352</td>
+<td>1024/10240</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xj983.com1.z0.glb.clouddn.com/test_database_update.png" alt="FirstInsert"></p>
+<p><br><br></p>
+<p>####接下来<br>大概看来，三种解决方案中，CoreData除了在大量写数据入库方面有所优势以外，其他几个方案表现都不是特别好。FMDB是对sqlite的一个封装，总体表现最好，特别是在对数据大量更新的方面，是其他两种的十倍以上的效率。<br><br>大家如果有兴趣，可以看看我的测试代码，如果有什么缺陷，一定请提出来！<br>接下来我会开始研究FMDB以及Realm的内部实现</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/09/29/DatabaseThink/" data-id="cjgq3yzhj00011fzpob668pl9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/12/06/Method-Swizzling/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          聊聊Method Swizzling
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/09/01/Dynamic-Synthesize/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">@dynamic 与 @synthesize 关键词详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自述/">自述</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/自述/" style="font-size: 10px;">自述</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/13/linearRegression/">机器学习（一）Linear Regression</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/06/Method-Swizzling/">聊聊Method Swizzling</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/29/DatabaseThink/">Core Data, FMDB, Realm 性能测试</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/01/Dynamic-Synthesize/">@dynamic 与 @synthesize 关键词详解</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/04/AsyncImageLoader/">异步加载图片</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

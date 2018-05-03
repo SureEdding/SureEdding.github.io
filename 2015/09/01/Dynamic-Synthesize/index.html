@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>@dynamic 与 @synthesize 关键词详解 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天开发的过程中，第一次自己遇到需要使用 @dynamic 关键词的场景，之前@dynamic只在NSManagedObject的子类中遇到过，因为NSManagedObject的子类是由CoreData直接生成的，其中对应参数(@property)的setter和getter方法也是由CoreData直接生成，并且不展现给你。">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="@dynamic 与 @synthesize 关键词详解">
+<meta property="og:url" content="http://yoursite.com/2015/09/01/Dynamic-Synthesize/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="今天开发的过程中，第一次自己遇到需要使用 @dynamic 关键词的场景，之前@dynamic只在NSManagedObject的子类中遇到过，因为NSManagedObject的子类是由CoreData直接生成的，其中对应参数(@property)的setter和getter方法也是由CoreData直接生成，并且不展现给你。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2015-09-01T10:28:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="@dynamic 与 @synthesize 关键词详解">
+<meta name="twitter:description" content="今天开发的过程中，第一次自己遇到需要使用 @dynamic 关键词的场景，之前@dynamic只在NSManagedObject的子类中遇到过，因为NSManagedObject的子类是由CoreData直接生成的，其中对应参数(@property)的setter和getter方法也是由CoreData直接生成，并且不展现给你。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Dynamic-Synthesize" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/01/Dynamic-Synthesize/" class="article-date">
+  <time datetime="2015-09-01T09:32:16.000Z" itemprop="datePublished">2015-09-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      @dynamic 与 @synthesize 关键词详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天开发的过程中，第一次自己遇到需要使用<br></p>
+<pre><code>@dynamic
+</code></pre><p>关键词的场景，之前@dynamic只在<code>NSManagedObject</code>的子类中遇到过，因为<code>NSManagedObject</code>的子类是由CoreData直接生成的，其中对应参数(<code>@property</code>)的<code>setter</code>和<code>getter</code>方法也是由CoreData直接生成，并且不展现给你。<br><br><a id="more"></a></p>
+<p>####Setter &amp; Getter<br>首先介绍一下什么是<code>setter</code>和<code>getter</code>方法：<br><br>由名字也大致能猜出<br><code>getter</code>方法是当你的程序某处读取一个参数A的时候，会调用的方法，它会返回当前A的值<br><br><code>setter</code>方法是当你的程序某处给参数A赋值的时候，会调用的方法，把新值赋值给变量A</p>
+<p>接下来，我们看一个标准的<code>setter</code> &amp;&amp; <code>getter</code>方法</p>
+<pre><code>@interface Sample()
+
+@property(nonatomic, strong, readwrite)NSObject *sampleObject;
+@end
+@implementation Sample
+@synthesize sampleObject = _sampleObject;
+
+//getter
+- (NSObject *)sampleObject
+{
+    return _sampleObject;
+}
+
+//setter
+- (void)setSampleObject:(NSObject *)sampleObject
+{
+    _sampleObject = sampleObject;
+}
+@end
+</code></pre><p>以上就是一个比较标准的<code>setter</code>以及<code>getter</code>方法<br><br>其中用到了我们要讲的一个关键词</p>
+<pre><code>@synthesize
+</code></pre><p>synthesize中文意思为‘合成’，在编译的过程中，编译器会帮你自动生成<code>getter</code>和<code>setter</code>方法，也就是说，上述代码中，把</p>
+<pre><code>- (NSObject *)sampleObject
+- (void)setSampleObject:(NSObject *)sampleObject
+</code></pre><p>两个函数的实现删除掉也是没有关系的。因为@synthesize语法糖会让编译器帮助你生成<code>getter</code>和<code>setter</code>方法<br><br>而现在的编译器（XCode6），即使你不写@synthesize，它同样会自动帮你生成<code>getter</code>和<code>setter</code>方法，但是具体是从哪个版本开始的我还没有查到。<br><br>而语法糖<code>@synthesize</code>的写法也很有深意</p>
+<pre><code>@synthesize sampleObject = _sampleObject;
+</code></pre><p>可以看出<code>sampleObject</code>是我们的参数名称,而<code>_sampleObject</code>呢？<br><code>_sampleObject</code>的下划线只是一种常用的命名规范，因为当你不写<code>@synthesize</code>的时候，编译器自动为你生成<code>getter</code>和<code>setter</code>方法中，你可以直接通过<code>_xxx</code>的形式来调用<code>getter</code>方法。你当然可以使用其他名字。</p>
+<p>####@dynamic<br>于是就到了今天主要要讲的<code>@dynamic</code>关键词。之前也说到了，这个关键词用的不多，最常见的地方还是在<code>CoreData</code>的<code>NSManagedObject</code>中会看见。<br><br><code>@dynamic A</code>相当于告诉编译器：“参数A的<code>getter</code>和<code>setter</code>方法并不在此处，而在其他地方实现了或者生成了，当你程序运行的时候你就知道了，所以别警告我了”这样程序在运行的时候，对应参数的<code>getter</code>和<code>setter</code>方法就会在其他地方去寻找，比如父类。<br><br>举一个例子吧</p>
+<p><code>父类</code></p>
+<pre><code>@interface father()
+@property (nonatomic, strong, readwrite) NSObject *sampleObject;
+...
+@synthesize sampleObject = _sampleObject;
+@end
+</code></pre><p><code>子类</code></p>
+<pre><code>@interface child : father
+@property (nonatomic, strong, readwrite) NSObject *sampleObject;
+...
+@dynamic sampleObject;
+@end
+</code></pre><p>这样的话，如果你在子类中调用sampleObject，则会调用父类的<code>getter</code>方法。</p>
+<p>####何时用到</p>
+<p>比如类遵守一个<code>delegate</code>时，<code>delegate</code>中的参数在父类的初始化方法中就赋值了，而子类的没有自己的初始化方法的时候，子类中的此参数就可以设为@dynamic，即和父类共用一个参数<br><br><br>如果有什么错误，欢迎指出！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/09/01/Dynamic-Synthesize/" data-id="cjgq3yzhv00041fzp5dtec5dz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/09/29/DatabaseThink/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Core Data, FMDB, Realm 性能测试
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/04/AsyncImageLoader/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">异步加载图片</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自述/">自述</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/自述/" style="font-size: 10px;">自述</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/13/linearRegression/">机器学习（一）Linear Regression</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/06/Method-Swizzling/">聊聊Method Swizzling</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/29/DatabaseThink/">Core Data, FMDB, Realm 性能测试</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/01/Dynamic-Synthesize/">@dynamic 与 @synthesize 关键词详解</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/04/AsyncImageLoader/">异步加载图片</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>聊聊Method Swizzling | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Method Swizzling算是Objective-C的runtime中常用的一个黑科技方法。Method Swizzling是用来改变/替换一个已经存在的  实例/类  方法的实现。">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊Method Swizzling">
+<meta property="og:url" content="http://yoursite.com/2015/12/06/Method-Swizzling/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Method Swizzling算是Objective-C的runtime中常用的一个黑科技方法。Method Swizzling是用来改变/替换一个已经存在的  实例/类  方法的实现。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/iosimage2015-11-30%2018-7-21.png">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/iosimage2015-11-30%2019-15-27.png">
+<meta property="og:updated_time" content="2015-12-06T01:38:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="聊聊Method Swizzling">
+<meta name="twitter:description" content="Method Swizzling算是Objective-C的runtime中常用的一个黑科技方法。Method Swizzling是用来改变/替换一个已经存在的  实例/类  方法的实现。">
+<meta name="twitter:image" content="http://7xj983.com1.z0.glb.clouddn.com/iosimage2015-11-30%2018-7-21.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Method-Swizzling" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/06/Method-Swizzling/" class="article-date">
+  <time datetime="2015-12-06T01:31:39.000Z" itemprop="datePublished">2015-12-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      聊聊Method Swizzling
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Method Swizzling算是Objective-C的runtime中常用的一个黑科技方法。<br><br>Method Swizzling是用来改变/替换一个已经存在的  实例/类  方法的实现。<br><br><a id="more"></a></p>
+<p>###概括<br>在Objective-C的类中，存在一个方法列表(dispatch table)。一个类/实例在调用一个方法的时候，会以@selector(methodName)为索引在方法列表中查询对应的实现<br></p>
+<p><img src="http://7xj983.com1.z0.glb.clouddn.com/iosimage2015-11-30%2018-7-21.png" alt="img"><br><br>(出处见水印)<br><br>IMP对应一个方法的实现，类似于函数指针。<br><br>Runtime提供了几个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//1、获取类cls的实例方法@selector(name)的实现IMP</span><br><span class="line">IMP class_getMethodImplementation(Class cls, SEL name);</span><br><span class="line"> </span><br><span class="line">//2、把类cls中的@selector(name)方法的实现替换为imp, types为表述此方法的参数类型的字符串.可以通过</span><br><span class="line">IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types) ;</span><br><span class="line"> </span><br><span class="line">//3、把Method1与Method2替换</span><br><span class="line">void method_exchangeImplementations(Method m1, Method m2) ;</span><br><span class="line"> </span><br><span class="line">//4、获取一个方法的参数描述字符串</span><br><span class="line">const char *method_getTypeEncoding(Method m)</span><br><span class="line"> </span><br><span class="line">//5、向一个类中添加一个新的方法</span><br><span class="line">//添加成功，返回YES,否则NO</span><br><span class="line">BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types) </span><br><span class="line">//还有很多....</span><br></pre></td></tr></table></figure>
+<p>具体可以参考苹果文档<br>比如用了第三个方法 method_exchangeImplementations那么交换之后的形式就为：<br><br><img src="http://7xj983.com1.z0.glb.clouddn.com/iosimage2015-11-30%2019-15-27.png" alt="img"><br>(出处见水印)</p>
+<p>###例子<br>举个例子，当我们想要检测一个页面打开了多少遍,我们可以在 viewDidAppear 当中添加统计代码，但是要想检测很多界面的话，在每一个VC当中都添加这么一个统计代码实在麻烦。当然如果用继承来实现也是可以的，但是必须继承 UIViewController, UITableViewController, UINavigationController等好几个，也是麻烦的很。<br>这个时候就可以使用OC的黑魔法了——-Method Swizzling</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#import &lt;objc/runtime.h&gt;</span><br><span class="line">@implementation UIViewController (Tracking)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">** + (void)load 方法，是当此类被引用链接的时候就会调用的一个方法</span><br><span class="line">*/</span><br><span class="line">+ (void)load &#123;</span><br><span class="line"> </span><br><span class="line">	//采用一个Singleton来进行Method Swizzling,保证只运行一次</span><br><span class="line">    static dispatch_once_t onceToken;</span><br><span class="line">    dispatch_once(&amp;onceToken, ^&#123;</span><br><span class="line">        Class class = [self class];</span><br><span class="line"></span><br><span class="line">        SEL originalSelector = @selector(viewWillAppear:);</span><br><span class="line">        SEL swizzledSelector = @selector(xxx_viewWillAppear:);</span><br><span class="line"></span><br><span class="line">		//通过方法名来获取对应的Method</span><br><span class="line">        Method originalMethod = class_getInstanceMethod(class, originalSelector);</span><br><span class="line">        Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);</span><br><span class="line"></span><br><span class="line">        // 如果是类方法，不是实例方法，用如下</span><br><span class="line">        // Class class = object_getClass((id)self);</span><br><span class="line">        // ...</span><br><span class="line">        // Method originalMethod = class_getClassMethod(class, originalSelector);</span><br><span class="line">        // Method swizzledMethod = class_getClassMethod(class, swizzledSelector);</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">	//贴此class_addMethod的一个官方注释，不翻译了...</span><br><span class="line">	//@return YES if the method was added successfully, otherwise NO </span><br><span class="line">	//(for example, the class already contains a method implementation with that name).</span><br><span class="line">	//@note class_addMethod will add an override of a superclass&apos;s implementation, </span><br><span class="line">	//but will not replace an existing implementation in this class. </span><br><span class="line">	//To change an existing implementation, use method_setImplementation.</span><br><span class="line"></span><br><span class="line">        BOOL didAddMethod =</span><br><span class="line">            class_addMethod(class,</span><br><span class="line">                originalSelector,</span><br><span class="line">                method_getImplementation(swizzledMethod),</span><br><span class="line">                method_getTypeEncoding(swizzledMethod));</span><br><span class="line"></span><br><span class="line">        if (didAddMethod) &#123;</span><br><span class="line">            class_replaceMethod(class,</span><br><span class="line">                swizzledSelector,</span><br><span class="line">                method_getImplementation(originalMethod),</span><br><span class="line">                method_getTypeEncoding(originalMethod));</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            method_exchangeImplementations(originalMethod, swizzledMethod);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#pragma mark - Method Swizzling</span><br><span class="line"></span><br><span class="line">- (void)xxx_viewWillAppear:(BOOL)animated &#123;</span><br><span class="line">    [self xxx_viewWillAppear:animated];</span><br><span class="line">    NSLog(@&quot;viewWillAppear: %@&quot;, self);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>现在任何一个ViewController或者其子类调用 viewWillAppear: 这个方法都会进入我们的xxx_viewWillAppear: 打印出log<br><br>注意点⚠️：我们的 xxx_viewWillAppear: 的实现看起来像是递归一样，但是因为我们做了Method Swizzling,所以我们的实现的内部调用 xxx_viewWillAppear: 其实是调用原来的 viewWillAppear: ，所以不会发生递归。<br></p>
+<p>###+ (void)load   VS   + (void)initialize</p>
+<p>Method Swizzling 永远应该在 + (void)load当中实现！<br>这两个方法都是每一个类在Objective-C的runtime的时候会被自动调用的方法<br>第一个load会在每一个类文件在第一次被链接的时候就会调用，也就是说只要它存在就会被调用一次。<br>第二个initialize只有在程序第一次调用了这个类的某一个方法或者这个类被实例化的时候（即在程序第一次向这个类发消息）才会被调用，如果用不到这个类，这个方法就不会被调用。<br>因为Method Swizzling是面向全局的。所以为了保证被执行，应该放在load里面。</p>
+<p>###Selectors, Methods, &amp; Implementations</p>
+<p>在Objective-C当中，selectors,methods, 还有 implementations,是runtime中常常出现的几个概念。<br>先贴一段苹果官方的说明</p>
+<ul>
+<li>Selector (typedef struct objc_selector *SEL):<br><br>Selectors are used to represent the name of a method at runtime.<br><br>A method selector is a C string that has been registered (or “mapped”) with the Objective-C runtime. Selectors generated by the compiler are automatically mapped by the runtime when the class is loaded .<br><br></li>
+<li><p>Method (typedef struct objc_method *Method):<br><br>An opaque type that represents a method in a class definition.<br><br></p>
+</li>
+<li><p>Implementation (typedef id (*IMP)(id, SEL, …)):<br><br>This data type is a pointer to the start of the function that implements the method.<br><br>This function uses standard C calling conventions as implemented for the current CPU architecture. The first argument is a pointer to self (that is, the memory for the particular instance of this class, or, for a class method, a pointer to the metaclass). The second argument is the method selector. The method arguments follow.</p>
+</li>
+</ul>
+<p>其实很好理解，就是每一个类(Class)都有一个方法列表，以便在runtime的时候发送消息。表中的每一行是一个方法(Method)，其中以一个特定的名字selector(SEL)为索引，指向这个方法的具体实现的函数指针(IMP)<br>Method Swizzling危险么？<br><br>乍一看很危险，但是<a href="https://www.quora.com/Proverbs-Sayings-and-Adages/Why-is-it-said-that-a-dull-knife-is-more-dangerous-than-a-sharp-one" target="_blank" rel="noopener">尖锐的刀子</a>更安全，所以还是看如何使用。<br><br><br><br>找到一个不错的问答:stackOverFlow上面关于<a href="http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c" target="_blank" rel="noopener">Method Swizzling的讨论</a></p>
+<p>###小结<br>这一篇浅谈了一下Method Swizzling的基本概念与基本使用，只是简单介绍了Method Swizzling的概念，使用与优缺点，具体的应用随后总结完后再写出来</p>
+<p>###引用<br><a href="http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c" target="_blank" rel="noopener">http://stackoverflow.com/questions/5339276/what-are-the-dangers-of-method-swizzling-in-objective-c</a><br><br><br><a href="http://nshipster.com/method-swizzling/" target="_blank" rel="noopener">http://nshipster.com/method-swizzling/</a><br><br><br><a href="http://blog.csdn.net/yiyaaixuexi/article/details/9374411" target="_blank" rel="noopener">http://blog.csdn.net/yiyaaixuexi/article/details/9374411</a><br><br><br><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/" target="_blank" rel="noopener">https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/</a><br><br></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/12/06/Method-Swizzling/" data-id="cjgq3yzil000e1fzptaitlox6" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/12/13/linearRegression/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          机器学习（一）Linear Regression
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/09/29/DatabaseThink/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Core Data, FMDB, Realm 性能测试</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自述/">自述</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/自述/" style="font-size: 10px;">自述</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/13/linearRegression/">机器学习（一）Linear Regression</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/06/Method-Swizzling/">聊聊Method Swizzling</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/29/DatabaseThink/">Core Data, FMDB, Realm 性能测试</a>
+          </li>
+        
+          <li>
+            <a href="/2015/09/01/Dynamic-Synthesize/">@dynamic 与 @synthesize 关键词详解</a>
+          </li>
+        
+          <li>
+            <a href="/2015/08/04/AsyncImageLoader/">异步加载图片</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
