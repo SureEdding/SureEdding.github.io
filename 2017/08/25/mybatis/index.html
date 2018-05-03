@@ -94,13 +94,13 @@
 
 
 
-<meta name="description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。 1、Mybatis运行结构Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。 但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？ 其实就是通过动态代理，动态代理在Mybatis中用的很多。 而要讲解这个代理的流程，需要先说一">
+<meta name="description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mybatis原理学习">
 <meta property="og:url" content="http://yoursite.com/2017/08/25/mybatis/index.html">
 <meta property="og:site_name" content="Sure‘s 博客">
-<meta property="og:description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。 1、Mybatis运行结构Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。 但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？ 其实就是通过动态代理，动态代理在Mybatis中用的很多。 而要讲解这个代理的流程，需要先说一">
+<meta property="og:description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_1.jpeg">
 <meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_2.png">
@@ -108,10 +108,10 @@
 <meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_4.jpeg">
 <meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_5.jpeg">
 <meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_6.png">
-<meta property="og:updated_time" content="2018-05-03T09:32:06.819Z">
+<meta property="og:updated_time" content="2018-05-03T09:34:28.720Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mybatis原理学习">
-<meta name="twitter:description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。 1、Mybatis运行结构Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。 但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？ 其实就是通过动态代理，动态代理在Mybatis中用的很多。 而要讲解这个代理的流程，需要先说一">
+<meta name="twitter:description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。">
 <meta name="twitter:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_1.jpeg">
 
 
@@ -337,7 +337,7 @@
       
 
       
-        <p>这次呢，大致介绍一些Mybatis的实现原理与总体设计。</p>
+        <p>这次呢，大致介绍一些Mybatis的实现原理与总体设计。<br><a id="more"></a></p>
 <h1 id="1、Mybatis运行结构"><a href="#1、Mybatis运行结构" class="headerlink" title="1、Mybatis运行结构"></a>1、Mybatis运行结构</h1><p>Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。</p>
 <p>但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？</p>
 <p>其实就是通过<strong>动态代理，</strong>动态代理在Mybatis中用的很多。</p>
