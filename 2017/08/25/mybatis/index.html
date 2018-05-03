@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Java," />
 
 
 
@@ -94,13 +94,25 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Sure‘s 博客">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。 1、Mybatis运行结构Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。 但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？ 其实就是通过动态代理，动态代理在Mybatis中用的很多。 而要讲解这个代理的流程，需要先说一">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mybatis原理学习">
+<meta property="og:url" content="http://yoursite.com/2017/08/25/mybatis/index.html">
 <meta property="og:site_name" content="Sure‘s 博客">
+<meta property="og:description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。 1、Mybatis运行结构Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。 但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？ 其实就是通过动态代理，动态代理在Mybatis中用的很多。 而要讲解这个代理的流程，需要先说一">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_1.jpeg">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_2.png">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_3.png">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_4.jpeg">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_5.jpeg">
+<meta property="og:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_6.png">
+<meta property="og:updated_time" content="2018-05-03T09:32:06.819Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Sure‘s 博客">
+<meta name="twitter:title" content="Mybatis原理学习">
+<meta name="twitter:description" content="这次呢，大致介绍一些Mybatis的实现原理与总体设计。 1、Mybatis运行结构Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。 但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？ 其实就是通过动态代理，动态代理在Mybatis中用的很多。 而要讲解这个代理的流程，需要先说一">
+<meta name="twitter:image" content="http://7xj983.com1.z0.glb.clouddn.com/mybatis_1.jpeg">
 
 
 
@@ -129,13 +141,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/08/25/mybatis/"/>
 
 
 
 
 
-  <title>Sure‘s 博客</title>
+  <title>Mybatis原理学习 | Sure‘s 博客</title>
   
 
 
@@ -160,9 +172,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -245,9 +255,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -277,9 +287,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/25/mybatis/" itemprop="url">Mybatis原理学习</a></h1>
+          <h1 class="post-title" itemprop="name headline">Mybatis原理学习</h1>
         
 
         <div class="post-meta">
@@ -329,9 +337,7 @@
       
 
       
-        
-          
-            <p>这次呢，大致介绍一些Mybatis的实现原理与总体设计。</p>
+        <p>这次呢，大致介绍一些Mybatis的实现原理与总体设计。</p>
 <h1 id="1、Mybatis运行结构"><a href="#1、Mybatis运行结构" class="headerlink" title="1、Mybatis运行结构"></a>1、Mybatis运行结构</h1><p>Mybatis提供了方便的方式，直接通过注入一个interface，就可以实现方便的数据库查询工作。</p>
 <p>但是仔细观察会发现，每一个interface其实并没有自己的实现类，那么mybatis是怎么让他实际去读写数据库的呢？</p>
 <p>其实就是通过<strong>动态代理，</strong>动态代理在Mybatis中用的很多。</p>
@@ -707,8 +713,6 @@ public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHa
 <h1 id="4、总结"><a href="#4、总结" class="headerlink" title="4、总结"></a>4、总结</h1><p>总的来说，Mybatis的大概核心流程为</p>
 <p><img src="http://7xj983.com1.z0.glb.clouddn.com/mybatis_6.png" alt="img"></p>
 
-          
-        
       
     </div>
     
@@ -723,262 +727,36 @@ public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHa
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/12/13/linearRegression/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/12/13/linearRegression/" itemprop="url">机器学习（一）Linear Regression</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-12-13T10:21:19+08:00">
-                2015-12-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/Java/" rel="tag"># Java</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          <p>###概括<br>作为一个机器学习的新手，最近在上<a href="https://www.coursera.org/learn/machine-learning/" target="_blank" rel="noopener">Coursera上Ng老师的机器学习课程</a>，这个课作为入门还是挺不错的，讲得浅显易懂，对学生的数学知识也有一定的补习。<br><br>相对的，这门课相当于是<a href="http://cs229.stanford.edu/" target="_blank" rel="noopener">斯坦福CS229</a>这门课的简单版，如果有想要更深入的了解，可以直接看CS229,<a href="http://open.163.com/special/opencourse/machinelearning.html" target="_blank" rel="noopener">网易公开课</a>上有视频。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/12/13/linearRegression/#more" rel="contents">
-              Read more &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/13/linearRegression/" rel="next" title="机器学习（一）Linear Regression">
+                <i class="fa fa-chevron-left"></i> 机器学习（一）Linear Regression
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
 
-    
+          <span class="post-nav-divider"></span>
 
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/12/06/Method-Swizzling/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/12/06/Method-Swizzling/" itemprop="url">聊聊Method Swizzling</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+          <div class="post-nav-prev post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-12-06T09:31:39+08:00">
-                2015-12-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>Method Swizzling算是Objective-C的runtime中常用的一个黑科技方法。<br><br>Method Swizzling是用来改变/替换一个已经存在的  实例/类  方法的实现。<br><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/12/06/Method-Swizzling/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -988,756 +766,11 @@ public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHa
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/09/29/DatabaseThink/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/09/29/DatabaseThink/" itemprop="url">Core Data, FMDB, Realm 性能测试</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-09-29T13:33:18+08:00">
-                2015-09-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreData/index.html#//apple_ref/doc/uid/TP40001075" target="_blank" rel="noopener">CoreData</a>, <a href="https://github.com/ccgus/fmdb" target="_blank" rel="noopener">FMDB</a>, <a href="https://realm.io/" target="_blank" rel="noopener">Realm</a>是iOS开发中数据本地持久化存储的常用的方法。<br>之后我准备深处探索一下这几个不同的解决方案的优劣与内部原理，于是我先就三个库的性能做了一次测试<br></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/09/29/DatabaseThink/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/09/01/Dynamic-Synthesize/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/09/01/Dynamic-Synthesize/" itemprop="url">@dynamic 与 @synthesize 关键词详解</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-09-01T17:32:16+08:00">
-                2015-09-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>今天开发的过程中，第一次自己遇到需要使用<br></p>
-<pre><code>@dynamic
-</code></pre><p>关键词的场景，之前@dynamic只在<code>NSManagedObject</code>的子类中遇到过，因为<code>NSManagedObject</code>的子类是由CoreData直接生成的，其中对应参数(<code>@property</code>)的<code>setter</code>和<code>getter</code>方法也是由CoreData直接生成，并且不展现给你。<br><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/09/01/Dynamic-Synthesize/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/08/04/AsyncImageLoader/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/08/04/AsyncImageLoader/" itemprop="url">异步加载图片</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-08-04T17:36:58+08:00">
-                2015-08-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>####概述<br>自己实现一个异步加载图片的扩展，功能类似于<a href="https://github.com/rs/SDWebImage" target="_blank" rel="noopener">SDWebImage</a><br><br></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/08/04/AsyncImageLoader/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/06/28/DrawPad/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/06/28/DrawPad/" itemprop="url">iOS画板</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-06-28T18:04:56+08:00">
-                2015-06-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>实践做一个小画板<br><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/06/28/DrawPad/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/06/28/PNChart/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/06/28/PNChart/" itemprop="url">PNChart解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-06-28T13:16:15+08:00">
-                2015-06-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>这篇文章准备介绍一下最近正在看的iOS下的绘制统计表格的三方库<br><br>先挖一个坑，等七月初考试结束后来填坑。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/06/28/PNChart/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/06/27/First-Blog/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Sure Edding">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sure‘s 博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/06/27/First-Blog/" itemprop="url">你好，博客</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-06-27T22:29:53+08:00">
-                2015-06-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>大家好，我是Sure，这是我的第一篇博客<br><br>我是一名iOS开发者，正在自学iOS开发<br><br>以后会在这里更新我的iOS学习之旅<br><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/06/27/First-Blog/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
 
 
           </div>
@@ -1745,6 +778,10 @@ public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHa
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -1765,8 +802,17 @@ public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHa
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -1819,6 +865,22 @@ public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHa
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1、Mybatis运行结构"><span class="nav-number">1.</span> <span class="nav-text">1、Mybatis运行结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2、SqlSession运行原理"><span class="nav-number">2.</span> <span class="nav-text">2、SqlSession运行原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1Executor"><span class="nav-number">2.1.</span> <span class="nav-text">2.1Executor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2StatementHandler"><span class="nav-number">2.2.</span> <span class="nav-text">2.2StatementHandler</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3、插件"><span class="nav-number">3.</span> <span class="nav-text">3、插件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1插件接口"><span class="nav-number">3.0.1.</span> <span class="nav-text">3.1插件接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2插件的代理和反射设计"><span class="nav-number">3.0.2.</span> <span class="nav-text">3.2插件的代理和反射设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3举个我们常用的例子-PageHelper"><span class="nav-number">3.0.3.</span> <span class="nav-text">3.3举个我们常用的例子 PageHelper</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4、总结"><span class="nav-number">4.</span> <span class="nav-text">4、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1939,10 +1001,10 @@ public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHa
 
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
 
-  
+
 
   
 
