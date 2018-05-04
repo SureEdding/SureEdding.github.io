@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="一、有意义的命名命名的原则就是 1、名副其实其实很简单，就是命名上就可以告诉代码的阅读者它为什么存在，它做什么事情，应该怎么用。书中还补充了一点，如果名称需要注释来补充，那就不算名副其实。但我觉得这一点有点儿绝对了。不过用能代表其存在意义的名字来命名是很重要的。 例如 int d; //消逝的时间 int daysSinceCreation;]]&amp;gt;&amp;lt;/ac:plain-text-bod">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读《代码整洁之道》">
+<meta property="og:url" content="http://yoursite.com/2016/05/23/clean code/index.html">
+<meta property="og:site_name" content="Sure‘s 博客">
+<meta property="og:description" content="一、有意义的命名命名的原则就是 1、名副其实其实很简单，就是命名上就可以告诉代码的阅读者它为什么存在，它做什么事情，应该怎么用。书中还补充了一点，如果名称需要注释来补充，那就不算名副其实。但我觉得这一点有点儿绝对了。不过用能代表其存在意义的名字来命名是很重要的。 例如 int d; //消逝的时间 int daysSinceCreation;]]&amp;gt;&amp;lt;/ac:plain-text-bod">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-05-04T05:19:48.198Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读《代码整洁之道》">
+<meta name="twitter:description" content="一、有意义的命名命名的原则就是 1、名副其实其实很简单，就是命名上就可以告诉代码的阅读者它为什么存在，它做什么事情，应该怎么用。书中还补充了一点，如果名称需要注释来补充，那就不算名副其实。但我觉得这一点有点儿绝对了。不过用能代表其存在意义的名字来命名是很重要的。 例如 int d; //消逝的时间 int daysSinceCreation;]]&amp;gt;&amp;lt;/ac:plain-text-bod">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/05/23/clean code/"/>
+
+
+
+
+
+  <title>读《代码整洁之道》 | Sure‘s 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Sure‘s 博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">记录成长</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/23/clean code/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sure Edding">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sure‘s 博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">读《代码整洁之道》</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-05-23T15:21:19+08:00">
+                2016-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、有意义的命名"><a href="#一、有意义的命名" class="headerlink" title="一、有意义的命名"></a>一、有意义的命名</h1><p>命名的原则就是</p>
+<h3 id="1、名副其实"><a href="#1、名副其实" class="headerlink" title="1、名副其实"></a>1、名副其实</h3><p>其实很简单，就是命名上就可以告诉代码的阅读者<strong>它为什么存在，它做什么事情，应该怎么用。</strong>书中还补充了一点，如果名称需要注释来补充，那就不算名副其实。但我觉得这一点有点儿绝对了。不过用能代表其存在意义的名字来命名是很重要的。</p>
+<p>例如</p>
+<pre><code>int d; //消逝的时间
+int daysSinceCreation;]]&gt;&lt;/ac:plain-text-body&gt;
+</code></pre><p>上面两个，明显第一个就有问题，因为离开了定义的地方，后面谁也看不懂这个“d”是干什么用的</p>
+<a id="more"></a>
+<h3 id="2、避免误导"><a href="#2、避免误导" class="headerlink" title="2、避免误导"></a>2、避免误导</h3><p>命名上要避免使用会或者可能会掩藏代码本意的错误线索。</p>
+<p>例如</p>
+<p>1）不要用一些专有名词的缩写来代表自己的变量（我觉得除非项目约定好的，否则就不要用任何缩写。当然，一些广泛使用的除外，例如 URL ）</p>
+<p>2）不要把类型名加在变量当中，即便其就是这个类型。例如用accountList来代表一组帐号列表就是不好的，直接用accounts或者accountGroup都不错（想起自己经常会使用类似于XXXArray…..以后会改正）</p>
+<p>3）不要出现命名差异很小，命名又长的情况，例如XYZControllerForEfficientHandlingOfStrings与XYZControllerForEfficientStorageOfStrings这样….乍一看谁能看出来这两个是不同的变量？！（我觉得命名这么又臭又长的很不好啊….虽说有代码补全并不会浪费时间，但是读这个代码像看个句子一样很累啊…命名还是要短小精悍的好）</p>
+<p>4）不要用小写l或者大写O之类的来命名，很容易和数字1和0搞混</p>
+<h3 id="3、做有意义的区分"><a href="#3、做有意义的区分" class="headerlink" title="3、做有意义的区分"></a>3、做有意义的区分</h3><p>因为同一个作用范围内不能出现两个同名的东西，所以在一系列的代码上做区分的时候要有一定意义，不然让人意义不明</p>
+<p>1）以数字后缀来区分的行为就很不成熟…..a1,a2,a3…这样的区分谁知道哪个是干嘛的？</p>
+<pre><code>public static void copyChars(char a1[], char a2[]){
+    for (int i = 0; i &lt; a1.length(); i++) {
+        a2[i] = a1[i];
+    }
+}
+</code></pre><p>比如上面这种乍一看就有点意义不明，比如把a1，a2改成 sourceChars 和 destinationChars 就好很多</p>
+<p>2）区分的时候不要用什么同义词什么的…例如<strong>ProductInfo</strong>和<strong>ProductData</strong>…</p>
+<p>还有什么类似于</p>
+<pre><code>getActiveAccount();
+getActiveAccounts();
+getActiveAccountInfo();
+</code></pre><p>以上三个就很奇怪好么？</p>
+<h3 id="4、使用读得出来的名称"><a href="#4、使用读得出来的名称" class="headerlink" title="4、使用读得出来的名称"></a>4、使用读得出来的名称</h3><p>命名的时候要用能够轻易读出来的名称，书上举了一个极端的例子</p>
+<p>  <strong>genymdhms</strong>（但是我觉得这样的变量命名简直丧心病狂，不止违背这一条吧）</p>
+<p>它的实际意义是生成日期，格式为年月日时分秒</p>
+<p>generate year month day hour <span>minute</span> seconds</p>
+<p>改成</p>
+<p>generateTimestamp就一目了然了</p>
+<h3 id="5、使用可搜索的名称"><a href="#5、使用可搜索的名称" class="headerlink" title="5、使用可搜索的名称"></a>5、使用可搜索的名称</h3><p>命名不要太短太常见，或者不要有很长的统一的前缀，不然就全局搜索某个名称的时候就会发现结果太多而失去搜索的意义。</p>
+<h3 id="6、避免使用编码"><a href="#6、避免使用编码" class="headerlink" title="6、避免使用编码"></a>6、避免使用编码</h3><p>之前看过同学做windows编程的时候，命名方式就是匈牙利命名法，完全意义不明好么？反正记着用驼峰法命名就好了…</p>
+<h3 id="7、避免思维映射"><a href="#7、避免思维映射" class="headerlink" title="7、避免思维映射"></a>7、避免思维映射</h3><p>很多情况下的命名不要与大众背道而驰吧，例如大多数人都习惯用单字母i, j, k来作为循环的索引，就不要用什么其它奇怪的单字母了（我觉得用index，idx 之类的也无伤大雅吧…），但是注意，除了这种情况，其它大多数情况一般都不用单字母来命名的，至于为什么请见第五条！</p>
+<p>总结为五个字：<strong>明确是王道</strong></p>
+<h3 id="8、类名，方法名"><a href="#8、类名，方法名" class="headerlink" title="8、类名，方法名"></a>8、类名，方法名</h3><p>类名的对象一般命名是名词或者名词短语：Customer, WikiPage, Account, AddressParser, PageDao之类</p>
+<p>方法名应该是动词或者动词短语：postPayment, deletePage, insertAccount, saveChange之类的，以及Java中的标准，在变量的setter 和 getter前面加上 set 和 get，或者is来标识</p>
+<h3 id="9、其它"><a href="#9、其它" class="headerlink" title="9、其它"></a>9、其它</h3><p>后面的几条感觉或多或少都和前面重复了，反正命名要短小精悍，意义明确，取词规范，符合大众标准</p>
+<h1 id="二、函数"><a href="#二、函数" class="headerlink" title="二、函数"></a>二、函数</h1><p>函数是非常重要的部分，程序中充斥着函数，所以函数的命名与实现的规范也是至关重要滴</p>
+<h3 id="1、短小"><a href="#1、短小" class="headerlink" title="1、短小"></a>1、短小</h3><p>函数的第一条规则就是短小，因为因为函数的第二条规则，函数逻辑要简单明了，如果写得太冗长的话，可读性就很差，也很容易出错，出错了也不容易定位错位在何处。如果一个功能不得不写得很长，就尽量去拆分为不同的函数。作者提出了，函数二十行封顶为最佳。</p>
+<h3 id="2、只做一件事"><a href="#2、只做一件事" class="headerlink" title="2、只做一件事"></a>2、只做一件事</h3><p>要判断函数是否不止做了一件事，有一个方法是判断其是否能再拆出一个函数。</p>
+<h3 id="3、每个函数一个抽象层级"><a href="#3、每个函数一个抽象层级" class="headerlink" title="3、每个函数一个抽象层级"></a>3、每个函数一个抽象层级</h3><p>要确保函数只做一件事，应该将函数的语句都在同一抽象层上。应该让代码拥有<span style="color: rgb(255,0,0);">自顶向下</span>的阅读顺序：我们要让每个函数后面都跟着位于下一抽象层的函数。这样一来，在查看函数列表时，就能按照抽象层级向下阅读。</p>
+<p>这里的抽象层级我的理解是，比如此函数是用于组织一系列小功能来实现大功能的话，那么前面的代码所调用的子函数在逻辑上位于后面的代码，保证其一个流程性的感觉吧。</p>
+<h3 id="4、switch语句"><a href="#4、switch语句" class="headerlink" title="4、switch语句"></a>4、switch语句</h3><p>switch语句由于其得天独厚的原因，要写短小的switch语句就很困难，因为它天生就要做很多并列的事情。</p>
+<p>比如这样一段代码</p>
+<pre><code>public Money calculatePay(Employee e)
+    throws InvalidEmployeeType
+{
+    switch(e.getType())
+    {
+        case COMMISSIONED:
+            return calculateCommissionedPay(e);
+        case HOURLY:
+            return calculateHourlyPay(e);
+        case SALARIED:
+            return calculateSalariedPay(e);
+        default:
+            throw new InvalidEmployeeType(e.getType());
+    }
+}
+</code></pre><p>上面这段代码就有很多问题，首先，它比较长了，其次，如果日后有了新的雇员类型进来之后，就必须改动这里的代码，还会变得更长，很容易出错。总的来说，它违背了单一权责问题（Single Responsibility Principle, SRP）以及开放闭合原则（Open Closed Principle, OCP）</p>
+<p>书中给出了一个解决方案，用抽象工厂的方式，把Switch语句放到抽象工厂下，不让任何人看见，该工厂使用Switch语句来为Employee的派生类创建实体，而不同实体的各种类似的方法可以统一用Employee接口来多态的实现。</p>
+<p>Talk is Cheap, Show me the code</p>
+<pre><code>public abstract class Employee {
+    public abstract boolean isPayDay();
+    public abstract Money calculatePay();
+    public abstract void deliverPay(Money pay);
+}
+//------------------以上是抽象类------------------------
+
+public interface EmployeeFactory {
+    public Employee makeEmployee(EmployeeRecord r) throws InvalidEmployeeType;
+}
+//------------------以上为工厂接口-----------------------
+
+public class EmployeeFactoryImp implements EmployeeFactory {
+    public Employee makeEmployee(EmployeeRecord r) throws InvalidEmployeeType
+    {
+        switch(r.getType())
+        {
+            case COMMISSIONED:
+                return new CommissionedEmployee(r);
+            case HOURLY:
+                return new HourlyEmployee(r);
+            case SALARIED:
+                return new SalariedEmployee(r);
+            default:
+                throw new InvalidEmployeeType(r.getType());
+        }
+    }
+}
+</code></pre><h3 id="5、描述性的名称"><a href="#5、描述性的名称" class="headerlink" title="5、描述性的名称"></a>5、描述性的名称</h3><p>这一点在前面第二章命名当中已经提到</p>
+<h3 id="6、函数参数"><a href="#6、函数参数" class="headerlink" title="6、函数参数"></a>6、函数参数</h3><pre><code>最理想的参数数量是0，其次为1，尽量避免3及以上的参数。参数传递中&lt;span style=&quot;color: rgb(255,0,0);&quot;&gt;不应该传入布尔值&lt;/span&gt;的参数，传入布尔值的参数，说明这个函数做了不止一件事情。如果标识为true会这样做，如果标识为false会那样做。对于这种情况我们应该把函数拆成两个函数。
+</code></pre><p>例如</p>
+<pre><code>render(true);
+</code></pre><p>函数的调用者就会不明所以，不知道这个true到底是干嘛的。</p>
+<p>虽然说函数的申明可以写成</p>
+<pre><code>public void render(Boolean isSuite)]]&gt;&lt;/ac:plain-text-body&gt;
+</code></pre><p>这样看起来稍微好一些，</p>
+<p>但是遇到布尔值，还是写成两个函数好一些</p>
+<pre><code>public void renderForSuite();
+public void renderForSingleTest();
+</code></pre><p>其次</p>
+<p>若需要3个或3个以上的参数，最好将其封装成一个类。例如：</p>
+<pre><code>Circle makeCircle(double x, double y, double radius);
+Circle makeCircle(Point center, double);
+</code></pre><h3 id="7、无副作用"><a href="#7、无副作用" class="headerlink" title="7、无副作用"></a>7、无副作用</h3><p>什么是副作用？就是说函数的调用一次对全局的状态有影响。例如改变了某个全局变量，初始化了某个类在函数结束的时候没有消除掉等等。对函数的实现尽量保持无副作用的情况，如果必须产生副作用，则在函数的名称中体现出来</p>
+<h3 id="8、分割指令与询问"><a href="#8、分割指令与询问" class="headerlink" title="8、分割指令与询问"></a>8、分割指令与询问</h3><p>函数要么做什么事，要么回答什么事，二者不可都做，两样都做将会引起混乱，例如：</p>
+<pre><code>public boolean setValue(String key, Object value);]]&gt;&lt;/ac:plain-text-body&gt;
+</code></pre><p>上面这个函数，把键为key的值设置为value，成功返回true,失败返回false。但是失败的原因多种多样，可能key不存在，可能设置不成功。这样就造成了意义不明</p>
+<p>  <br></p>
+<h3 id="9、使用异常替代返回错误码"><a href="#9、使用异常替代返回错误码" class="headerlink" title="9、使用异常替代返回错误码"></a>9、使用异常替代返回错误码</h3><p>若返回错误码就要求调用者立即进行如下错误处理，这样会导致整个代码结构混乱，大量篇幅在进行错误码的判断：</p>
+<pre><code>if (deletePage(page) == E_OK) {
+    if (registry.deleteReference(page.name) == E_OK) {
+        if (configKeys.deleteKey(page.name.makekey()) == E_OK) {
+            log.error(&quot;page deleted&quot;);
+        }
+        log.error(&quot;configKey not deleted&quot;);
+    }
+    log.error(&quot;deleteReference from registry failed&quot;);
+} else {
+    log.error(&quot;delete failed&quot;);
+    return E_ERROR;
+}
+//--------------------以上为错误码方式--------------------
+
+try{
+    deletePage(page);
+    registry.deleteReference(page.name);
+    configKeys.deleteKey(page.name.makekey());
+} catch (Exception e) {
+    log.error(e.getMessage);
+}
+//--------------------以上为异常方式--------------------
+</code></pre><p>异常方式就显得简单得多</p>
+<p>而且，应该把try/catch的逻辑单独抽离出来，内部的实现单独使用一个函数来包装，就会显得好很多。</p>
+<pre><code>public void delete(Page page) {//只与错误处理相关
+    try {
+        deletePageAndAllReferences(page);
+    } catch (Exception e) {
+        logError(e);
+    }
+}
+
+private void deletePageAndAllReferences(Page page) throws Exception {//只与完全删除一个page相关
+    deletePage(page);
+    registry.deleteReference(page.name);
+    configKeys.deleteKey(page.name.makekey());
+}
+
+private void logError(Exception e) {
+    log.error(e.getMessage());
+}
+</code></pre><p>错误处理不应该与其他事情混合到一起来做。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/13/linearRegression/" rel="next" title="机器学习（一）Linear Regression">
+                <i class="fa fa-chevron-left"></i> 机器学习（一）Linear Regression
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/21/MySQL Isolation/" rel="prev" title="数据库事务隔离级别与加锁机制">
+                数据库事务隔离级别与加锁机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Sure Edding" />
+          <p class="site-author-name" itemprop="name">Sure Edding</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、有意义的命名"><span class="nav-number">1.</span> <span class="nav-text">一、有意义的命名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、名副其实"><span class="nav-number">1.0.1.</span> <span class="nav-text">1、名副其实</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、避免误导"><span class="nav-number">1.0.2.</span> <span class="nav-text">2、避免误导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、做有意义的区分"><span class="nav-number">1.0.3.</span> <span class="nav-text">3、做有意义的区分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、使用读得出来的名称"><span class="nav-number">1.0.4.</span> <span class="nav-text">4、使用读得出来的名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、使用可搜索的名称"><span class="nav-number">1.0.5.</span> <span class="nav-text">5、使用可搜索的名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、避免使用编码"><span class="nav-number">1.0.6.</span> <span class="nav-text">6、避免使用编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7、避免思维映射"><span class="nav-number">1.0.7.</span> <span class="nav-text">7、避免思维映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8、类名，方法名"><span class="nav-number">1.0.8.</span> <span class="nav-text">8、类名，方法名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9、其它"><span class="nav-number">1.0.9.</span> <span class="nav-text">9、其它</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、函数"><span class="nav-number">2.</span> <span class="nav-text">二、函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、短小"><span class="nav-number">2.0.1.</span> <span class="nav-text">1、短小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、只做一件事"><span class="nav-number">2.0.2.</span> <span class="nav-text">2、只做一件事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、每个函数一个抽象层级"><span class="nav-number">2.0.3.</span> <span class="nav-text">3、每个函数一个抽象层级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、switch语句"><span class="nav-number">2.0.4.</span> <span class="nav-text">4、switch语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、描述性的名称"><span class="nav-number">2.0.5.</span> <span class="nav-text">5、描述性的名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、函数参数"><span class="nav-number">2.0.6.</span> <span class="nav-text">6、函数参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7、无副作用"><span class="nav-number">2.0.7.</span> <span class="nav-text">7、无副作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8、分割指令与询问"><span class="nav-number">2.0.8.</span> <span class="nav-text">8、分割指令与询问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9、使用异常替代返回错误码"><span class="nav-number">2.0.9.</span> <span class="nav-text">9、使用异常替代返回错误码</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sure Edding</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

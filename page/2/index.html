@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -94,18 +94,13 @@
 
 
 
-<meta name="description" content="今天开发的过程中，第一次自己遇到需要使用 @dynamic 关键词的场景，之前@dynamic只在NSManagedObject的子类中遇到过，因为NSManagedObject的子类是由CoreData直接生成的，其中对应参数(@property)的setter和getter方法也是由CoreData直接生成，并且不展现给你。">
-<meta name="keywords" content="iOS">
-<meta property="og:type" content="article">
-<meta property="og:title" content="@dynamic 与 @synthesize 关键词详解">
-<meta property="og:url" content="http://yoursite.com/2015/09/01/Dynamic-Synthesize/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sure‘s 博客">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="Sure‘s 博客">
-<meta property="og:description" content="今天开发的过程中，第一次自己遇到需要使用 @dynamic 关键词的场景，之前@dynamic只在NSManagedObject的子类中遇到过，因为NSManagedObject的子类是由CoreData直接生成的，其中对应参数(@property)的setter和getter方法也是由CoreData直接生成，并且不展现给你。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2015-09-01T10:28:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="@dynamic 与 @synthesize 关键词详解">
-<meta name="twitter:description" content="今天开发的过程中，第一次自己遇到需要使用 @dynamic 关键词的场景，之前@dynamic只在NSManagedObject的子类中遇到过，因为NSManagedObject的子类是由CoreData直接生成的，其中对应参数(@property)的setter和getter方法也是由CoreData直接生成，并且不展现给你。">
+<meta name="twitter:title" content="Sure‘s 博客">
 
 
 
@@ -134,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2015/09/01/Dynamic-Synthesize/"/>
+  <link rel="canonical" href="http://yoursite.com/page/2/"/>
 
 
 
 
 
-  <title>@dynamic 与 @synthesize 关键词详解 | Sure‘s 博客</title>
+  <title>Sure‘s 博客</title>
   
 
 
@@ -165,7 +160,9 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail ">
+  <div class="container sidebar-position-left 
+   page-home 
+ ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -248,9 +245,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -263,7 +260,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/09/01/Dynamic-Synthesize/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/06/27/First-Blog/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Sure Edding">
@@ -280,7 +277,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">@dynamic 与 @synthesize 关键词详解</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2015/06/27/First-Blog/" itemprop="url">你好，博客</a></h1>
         
 
         <div class="post-meta">
@@ -292,8 +291,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-09-01T17:32:16+08:00">
-                2015-09-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-06-27T22:29:53+08:00">
+                2015-06-27
               </time>
             
 
@@ -330,55 +329,16 @@
       
 
       
-        <p>今天开发的过程中，第一次自己遇到需要使用<br></p>
-<pre><code>@dynamic
-</code></pre><p>关键词的场景，之前@dynamic只在<code>NSManagedObject</code>的子类中遇到过，因为<code>NSManagedObject</code>的子类是由CoreData直接生成的，其中对应参数(<code>@property</code>)的<code>setter</code>和<code>getter</code>方法也是由CoreData直接生成，并且不展现给你。<br><br><a id="more"></a></p>
-<p>####Setter &amp; Getter<br>首先介绍一下什么是<code>setter</code>和<code>getter</code>方法：<br><br>由名字也大致能猜出<br><code>getter</code>方法是当你的程序某处读取一个参数A的时候，会调用的方法，它会返回当前A的值<br><br><code>setter</code>方法是当你的程序某处给参数A赋值的时候，会调用的方法，把新值赋值给变量A</p>
-<p>接下来，我们看一个标准的<code>setter</code> &amp;&amp; <code>getter</code>方法</p>
-<pre><code>@interface Sample()
-
-@property(nonatomic, strong, readwrite)NSObject *sampleObject;
-@end
-@implementation Sample
-@synthesize sampleObject = _sampleObject;
-
-//getter
-- (NSObject *)sampleObject
-{
-    return _sampleObject;
-}
-
-//setter
-- (void)setSampleObject:(NSObject *)sampleObject
-{
-    _sampleObject = sampleObject;
-}
-@end
-</code></pre><p>以上就是一个比较标准的<code>setter</code>以及<code>getter</code>方法<br><br>其中用到了我们要讲的一个关键词</p>
-<pre><code>@synthesize
-</code></pre><p>synthesize中文意思为‘合成’，在编译的过程中，编译器会帮你自动生成<code>getter</code>和<code>setter</code>方法，也就是说，上述代码中，把</p>
-<pre><code>- (NSObject *)sampleObject
-- (void)setSampleObject:(NSObject *)sampleObject
-</code></pre><p>两个函数的实现删除掉也是没有关系的。因为@synthesize语法糖会让编译器帮助你生成<code>getter</code>和<code>setter</code>方法<br><br>而现在的编译器（XCode6），即使你不写@synthesize，它同样会自动帮你生成<code>getter</code>和<code>setter</code>方法，但是具体是从哪个版本开始的我还没有查到。<br><br>而语法糖<code>@synthesize</code>的写法也很有深意</p>
-<pre><code>@synthesize sampleObject = _sampleObject;
-</code></pre><p>可以看出<code>sampleObject</code>是我们的参数名称,而<code>_sampleObject</code>呢？<br><code>_sampleObject</code>的下划线只是一种常用的命名规范，因为当你不写<code>@synthesize</code>的时候，编译器自动为你生成<code>getter</code>和<code>setter</code>方法中，你可以直接通过<code>_xxx</code>的形式来调用<code>getter</code>方法。你当然可以使用其他名字。</p>
-<p>####@dynamic<br>于是就到了今天主要要讲的<code>@dynamic</code>关键词。之前也说到了，这个关键词用的不多，最常见的地方还是在<code>CoreData</code>的<code>NSManagedObject</code>中会看见。<br><br><code>@dynamic A</code>相当于告诉编译器：“参数A的<code>getter</code>和<code>setter</code>方法并不在此处，而在其他地方实现了或者生成了，当你程序运行的时候你就知道了，所以别警告我了”这样程序在运行的时候，对应参数的<code>getter</code>和<code>setter</code>方法就会在其他地方去寻找，比如父类。<br><br>举一个例子吧</p>
-<p><code>父类</code></p>
-<pre><code>@interface father()
-@property (nonatomic, strong, readwrite) NSObject *sampleObject;
-...
-@synthesize sampleObject = _sampleObject;
-@end
-</code></pre><p><code>子类</code></p>
-<pre><code>@interface child : father
-@property (nonatomic, strong, readwrite) NSObject *sampleObject;
-...
-@dynamic sampleObject;
-@end
-</code></pre><p>这样的话，如果你在子类中调用sampleObject，则会调用父类的<code>getter</code>方法。</p>
-<p>####何时用到</p>
-<p>比如类遵守一个<code>delegate</code>时，<code>delegate</code>中的参数在父类的初始化方法中就赋值了，而子类的没有自己的初始化方法的时候，子类中的此参数就可以设为@dynamic，即和父类共用一个参数<br><br><br>如果有什么错误，欢迎指出！</p>
-
+        
+          <p>大家好，我是Sure，这是我的第一篇博客<br><br>我是一名iOS开发者，正在自学iOS开发<br><br>以后会在这里更新我的iOS学习之旅<br><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2015/06/27/First-Blog/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
       
     </div>
     
@@ -393,40 +353,14 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/iOS/" rel="tag"># iOS</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2015/08/04/AsyncImageLoader/" rel="next" title="异步加载图片">
-                <i class="fa fa-chevron-left"></i> 异步加载图片
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/09/29/DatabaseThink/" rel="prev" title="Core Data, FMDB, Realm 性能测试">
-                Core Data, FMDB, Realm 性能测试 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -436,11 +370,14 @@
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
 
 
           </div>
@@ -448,10 +385,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-  </div>
-
 
         </div>
         
@@ -646,10 +579,10 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
 
-
+  
 
   
 
